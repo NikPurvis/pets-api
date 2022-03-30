@@ -31,25 +31,10 @@ const router = express.Router()
 //////////////////////
 // Routes
 //////////////////////
-//
-// INDEX
-// GET /pets
-// router.get("/pets", (req, res, next) => {
-//     // We'll allow access to view all the pets by skipping "requireToken".
-//     // If we wanted to make this a protected resource, we'd just need to add that middleware as the second argument our GET, ala CREATE.
-//     Pet.find()
-//         .then(pets = {
-//             // "pets" will be an array of Mongoose documents, so we want to turn them into POJO -- plain old javascript objects.
-//             return pets.map(pet => pet.toObject())
-//         })
-//         // Since we've reutnred an array of pets (remember map returns a new array), we want to be able to access it is in next step of the promise chain.
-//         .then(pets => res.status(200).json({ pets: pets }))
-//         .catch(next)
-// })
 
 // INDEX
 // GET /pets
-router.get('/pets', (req, res, next) => {
+router.get("/pets", (req, res, next) => {
     // we will allow access to view all the pets, by skipping 'requireToken'
     // if we wanted to make this a protected resource, we'd just need to add that middleware as the second arg to our get(like we did in create for our post)
     Pet.find()
@@ -64,22 +49,10 @@ router.get('/pets', (req, res, next) => {
         .catch(next)
 })
 
-// SHOW
-// GET /pets/624470cd4fec70366ebfda1d
-// router.get("/pets/:id", (req, res, next) => {
-//     // We get the ID from req.params.id -> :id
-//     Pet.findById(req.params.id)
-//         // If the pet's not found, we'll send the custom error
-//         .then(handle404)
-//         // If the find is successful, respond jwith an object as JSON
-//         .then(pet => res.status(200).json({ pet: pet.toObject() }))
-//         // Otherwise, pass to error handler.
-//         .catch(next)
-// })
 
 // SHOW
 // GET /pets/624470c12ed7079ead53d4df
-router.get('/pets/:id', (req, res, next) => {
+router.get("/pets/:id", (req, res, next) => {
     // we get the id from req.params.id -> :id
     Pet.findById(req.params.id)
         .populate("owner")
@@ -89,7 +62,6 @@ router.get('/pets/:id', (req, res, next) => {
         // otherwise pass to error handler
         .catch(next)
 })
-
 
 
 // CREATE
@@ -107,7 +79,28 @@ router.post("/pets", requireToken, (req, res, next) => {
         // If an error occurs, pass it to the error handler.
         .catch(next)
 })
+
+
 // UPDATE
+// PATCH /pets/624470c12ed7079ead53d4df
+router.patch("/pets/:id", requireToken, removeBlanks, (req, res, next) => {
+    // If the client atttempts to change the owner of the pet, we can disallow that from the beginning.
+    delete req.body.owner
+    // 1. Find pet by ID
+    Pet.findById(req.params.id)
+        // 2. Handle 404
+        .then(handle404)
+        // 3. Require ownership and update pet
+        .then(pet => {
+            requireOwnership(req, pet)
+            return pet.updateOne(req.body.pet)
+        // 4. Send 204 No Content if successful
+        .then(() => res.sendStatus(204))
+        })
+        // 5. Pass to error handler if not successful
+        .catch(next)
+})
+
 
 // REMOVE
 // DELETE /pets/624470c12ed7079ead53d4df
@@ -129,8 +122,6 @@ router.delete("/pets/:id", requireToken, (req, res, next) => {
         .catch(next)
 })
 
-
-//
 /////////////////////
 // End routes
 /////////////////////
