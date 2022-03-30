@@ -23,6 +23,8 @@ mongoose.connect(db, {
         // 2. Remove all the pets
         Pet.remove({})
         // This is just a basic development app, buy we can add a bunch of javascript stuff here if we wanted, like if the owner still exists, don't remove, etc.
+        // Syntax for that:
+        //  Pet.deleteMany({ owner: null })
             .then(deletedPets => {
                 console.log("Deleted pets:", deletedPets)
                 // 3. Create a bunch of new pets using the startPets array
