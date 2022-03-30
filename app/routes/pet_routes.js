@@ -108,7 +108,28 @@ router.post("/pets", requireToken, (req, res, next) => {
         .catch(next)
 })
 // UPDATE
+
 // REMOVE
+// DELETE /pets/624470c12ed7079ead53d4df
+router.delete("/pets/:id", requireToken, (req, res, next) => {
+    // 1. Find the pet by ID
+    Pet.findById(req.params.id)
+    // 2. Handle the 404 if any    
+        .then(handle404)
+    // 3. Use requireOwnership middleware to make sure the right person is making this request. We don't want to use remove by in the query then, so we can evoke this function.
+        .then(pet => {
+            // requireOwnership needs two arguments: the request and the document itself
+            requireOwnership(req, pet)
+            // Delete if the middleware doesn't throw an error
+            pet.deleteOne()
+        })
+        // 4. Send back a 204 no content status
+        .then(() => res.sendStatus(204))
+        // 5. If error occurs, pass to the handler
+        .catch(next)
+})
+
+
 //
 /////////////////////
 // End routes
