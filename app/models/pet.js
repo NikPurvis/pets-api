@@ -36,6 +36,15 @@ const petSchema = new Schema(
     }
 )
 
-// virtuals go here(we"ll build these later)
+// virtuals go here(we'll build these later)
+// A virtual is a virtual property, that uses the data that'ss saved in the database.
+// To add a property whenver we retrieve that document and convert to an object.
+petSchema.virtual("fullTitle").get(function () {
+    // We can do whatever javascripty things we want in here, we just need to make sure that we return some value.
+    // It has to be in this structure so we can use "this.".
+    // fullTitle is going to combine the name and type to build a title.
+    // We could use this for anything. ex: If you had birthdate, could show if person was of legal drinking age. It reads the data and performs the function.
+    return `${this.name} the ${this.type}`
+})
 
 module.exports = model("Pet", petSchema)
