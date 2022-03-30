@@ -7,7 +7,7 @@ const Pet = require("../models/pet")
 
 ////////////////
 // Middleware
-////////////////
+//
 // Helps us detect certain situations and send custom errors.
 const customErrors = require("../../lib/custom_errors")
 // This function sends a 404 when non-existent document is requested
@@ -21,8 +21,7 @@ const removeBlanks = require("../../lib/remove_blank_fields")
 
 // Instantiate our router
 const router = express.Router()
-
-/////////////////////
+//
 // End middleware
 /////////////////////
 
@@ -30,8 +29,7 @@ const router = express.Router()
 
 //////////////////////
 // Routes
-//////////////////////
-
+//
 // INDEX
 // GET /pets
 router.get("/pets", (req, res, next) => {
@@ -49,7 +47,6 @@ router.get("/pets", (req, res, next) => {
         .catch(next)
 })
 
-
 // SHOW
 // GET /pets/624470c12ed7079ead53d4df
 router.get("/pets/:id", (req, res, next) => {
@@ -62,7 +59,6 @@ router.get("/pets/:id", (req, res, next) => {
         // otherwise pass to error handler
         .catch(next)
 })
-
 
 // CREATE
 // We use "next" because we have our custom middleware handling under our routes in server.js. When a request happens, it first goes to server.js, it finds the route (so reads petRoutes), and then either does what petRoutes wants it to do, or passes the request down to the error handler and says "something went wrong".
@@ -79,7 +75,6 @@ router.post("/pets", requireToken, (req, res, next) => {
         // If an error occurs, pass it to the error handler.
         .catch(next)
 })
-
 
 // UPDATE
 // PATCH /pets/624470c12ed7079ead53d4df
@@ -101,7 +96,6 @@ router.patch("/pets/:id", requireToken, removeBlanks, (req, res, next) => {
         .catch(next)
 })
 
-
 // REMOVE
 // DELETE /pets/624470c12ed7079ead53d4df
 router.delete("/pets/:id", requireToken, (req, res, next) => {
@@ -121,11 +115,9 @@ router.delete("/pets/:id", requireToken, (req, res, next) => {
         // 5. If error occurs, pass to the handler
         .catch(next)
 })
-
-/////////////////////
+//
 // End routes
 /////////////////////
-
 
 
 // Keep at bottom of file
