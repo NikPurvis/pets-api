@@ -32,7 +32,25 @@ const router = express.Router()
 // Routes
 //////////////////////
 //
-//
+// INDEX
+// SHOW
+// CREATE
+// We use "next" because we have our custom middleware handling under our routes in server.js. When a request happens, it first goes to server.js, it finds the route (so reads petRoutes), and then either does what petRoutes wants it to do, or passes the request down to the error handler and says "something went wrong".
+router.post("/pets", requireToken, (req, res, next) => {
+    // We brought in requireToken so we can have access to req.user.
+    req.body.pet.owner = req.user.id
+
+    Pet.create(req.body.pet)
+        .then(pet => {
+            // Send a successful response like this:
+            res.status(201).json({pet: pet.toObject() })
+            // toObject turns it from BSON (binary javascript object notation, from database) to javascript object notation (JSON) so we can do stuff with it.
+        })
+        // If an error occurs, pass it to the error handler.
+        .catch(next)
+})
+// UPDATE
+// REMOVE
 //
 /////////////////////
 // End routes
