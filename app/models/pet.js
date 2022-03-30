@@ -1,6 +1,6 @@
-// PET -> has many toys and has owner that is user
+// // PET -> has many toys and has owner that is user
 
-const mongoose = require ("mongoose")
+const mongoose = require("mongoose")
 
 const { Schema, model } = mongoose
 
@@ -26,16 +26,16 @@ const petSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "User"
         }
-    },{
+
+    }, {
         timestamps: true,
-        // We're going to add virtuals to our model.
+        // We"re going to add virtuals to our model.
         // These lines ensure that the virtual will be included whenever we turn our document to an object or JSON.
         toObject: { virtuals: true },
         toJSON: { virtuals: true }
-    }        
-
+    }
 )
 
-// Virtuals go here (we'll build these later)
+// virtuals go here(we"ll build these later)
 
-model.exports = model("Pet", petSchema)
+module.exports = model("Pet", petSchema)

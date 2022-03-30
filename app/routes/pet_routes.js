@@ -43,7 +43,7 @@ router.post("/pets", requireToken, (req, res, next) => {
     Pet.create(req.body.pet)
         .then(pet => {
             // Send a successful response like this:
-            res.status(201).json({pet: pet.toObject() })
+            res.status(201).json({ pet: pet.toObject() })
             // toObject turns it from BSON (binary javascript object notation, from database) to javascript object notation (JSON) so we can do stuff with it.
         })
         // If an error occurs, pass it to the error handler.
