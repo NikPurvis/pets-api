@@ -65,6 +65,33 @@ router.get('/pets', (req, res, next) => {
 })
 
 // SHOW
+// GET /pets/624470cd4fec70366ebfda1d
+// router.get("/pets/:id", (req, res, next) => {
+//     // We get the ID from req.params.id -> :id
+//     Pet.findById(req.params.id)
+//         // If the pet's not found, we'll send the custom error
+//         .then(handle404)
+//         // If the find is successful, respond jwith an object as JSON
+//         .then(pet => res.status(200).json({ pet: pet.toObject() }))
+//         // Otherwise, pass to error handler.
+//         .catch(next)
+// })
+
+// SHOW
+// GET /pets/624470c12ed7079ead53d4df
+router.get('/pets/:id', (req, res, next) => {
+    // we get the id from req.params.id -> :id
+    Pet.findById(req.params.id)
+        .populate("owner")
+        .then(handle404)
+        // if its successful, respond with an object as json
+        .then(pet => res.status(200).json({ pet: pet.toObject() }))
+        // otherwise pass to error handler
+        .catch(next)
+})
+
+
+
 // CREATE
 // We use "next" because we have our custom middleware handling under our routes in server.js. When a request happens, it first goes to server.js, it finds the route (so reads petRoutes), and then either does what petRoutes wants it to do, or passes the request down to the error handler and says "something went wrong".
 router.post("/pets", requireToken, (req, res, next) => {
