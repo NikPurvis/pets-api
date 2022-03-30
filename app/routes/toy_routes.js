@@ -48,11 +48,73 @@ router.post("/toys/:petId", (req, res, next) => {
 })
 
 
-// PATCH -> update a toy
+// UPDATE
 // PATCH /toys/<pet_id>/<toy_id>
-// 
+router.patch('/toys/:petId/:toyId', requireToken, removeBlanks, (req, res, next) => {
+    const toyId = req.params.toyId
+    const petId = req.params.petId
+
+    Pet.findById(petId)
+        .then(handle404)
+        .then(pet => {
+            const theToy = pet.toys.id(toyId)
+            console.log('this is the original toy', theToy)
+            requireOwnership(req, pet)
+
+            theToy.set(req.body.toy)
+
+            return pet.save()
+        })
+        // .then(data => {
+        //     const { theToy, pet } = data
+        //     // console.log('this is data in update', data)
+        //     console.log('this is the toy in req.body', req.body.toy)
+        //     console.log('type from req.body', typeof req.body.toy.isSqueaky)
+        //     console.log('theToy', theToy)
+        //     console.log('pet', pet)
+        //     theToy.name = req.body.toy.name
+        //     theToy.description = req.body.toy.description
+        //     if (req.body.toy.isSqueaky) {
+        //         theToy.isSqueaky = true
+        //     } else {
+        //         theToy.isSqueaky = false
+        //     }
+        //     theToy.condition = req.body.toy.condition
+            
+        //     // theToy.set({ toy: req.body.toy })
+        //     console.log('theToy after updating', theToy)
+
+        //     return pet.save()
+        // })
+        .then(() => res.sendStatus(204))
+        .catch(next)
+})
+
+
 // DELETE -> delete a toy
 // DELETE /toys/<pet_id>/<toy_id>
+router.delete("/toys/:petId/:toyId", requireToken, (req, res, next) => {
+    // Saving both IDs to variables for easy reference later
+    const toyId = req.params.toyId
+    const petId = req.params.petId
+    // Find the pet in the db
+    Pet.findById(petId)
+        // If pet not found, throw 404.
+        .then(handle404)
+        .then (pet => {
+            // Get the specific subdocument by its id
+            const theToy = pet.toys.id(toyId)
+            // Require that t he deleter is the owner of the pet
+            requireOwnership(req, pet)
+            // Call remove on the toy we got on the line above requireOwnership
+            theToy.remove()
+
+            return pet.save()
+        })
+        .then(() => res.sendStatus(204))
+        .catch(next)
+})
+
 //
 // End routes
 /////////////////////
